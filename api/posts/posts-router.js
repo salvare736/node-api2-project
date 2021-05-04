@@ -53,32 +53,55 @@ router.get('/', (req, res) => {
         });
 });
 
+// router.post('/', (req, res) => {
+//     Posts.insert(req.body)
+//         .then(newPost => {
+//             if (!req.body.title || !req.body.contents) {
+//                 res.status(400).json({
+//                     message: 'Please provide title and contents for the post'
+//                 });
+//             } else {
+//                 Posts.findById(newPost.id)
+//                     .then(createdPost => {
+//                         res.status(201).json(createdPost);
+//                     })
+//                     .catch(err => {
+//                         console.log(err);
+//                         res.status(500).json({
+//                             message: 'The post information could not be retrieved'
+//                         });
+//                     });
+//             }
+//         })
+//         .catch(err => {
+//             console.log(err);
+//             res.status(500).json({
+//                 message: 'There was an error while saving the post to the database'
+//             });
+//         });
+// });
+
 router.post('/', (req, res) => {
-    Posts.insert(req.body)
-        .then(newPost => {
-            if (!req.body.title || !req.body.contents) {
-                res.status(400).json({
-                    message: 'Please provide title and contents for the post'
-                });
-            } else {
-                Posts.findById(newPost.id)
-                    .then(createdPost => {
-                        res.status(201).json(createdPost);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json({
-                            message: 'The post information could not be retrieved'
-                        });
-                    });
-            }
+    const { title, contents } = req.body;
+    if (!title || !contents) {
+        res.status(400).json({
+            message: 'Please provide title and contents for the post'
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                message: 'There was an error while saving the post to the database'
+    } else {
+        Posts.insert({ title, contents })
+            .then(({ id }) => {
+                return Posts.findById(id);
+            })
+            .then(post => {
+                res.status(201).json(post);
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: 'There was an error while saving the post to the database'
+                });
             });
-        });
+    }
 });
 
 router.delete('/:id', (req, res) => {
