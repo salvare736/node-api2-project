@@ -2,7 +2,7 @@
 const router = require('express').Router();
 const Posts = require('./posts-model');
 
-router.get('/http://localhost:4001/api/posts/:id/comments', (req, res) => {
+router.get('/:id/comments', (req, res) => {
     Posts.findPostComments(req.params.id)
         .then()
         .catch(err => {
@@ -13,9 +13,17 @@ router.get('/http://localhost:4001/api/posts/:id/comments', (req, res) => {
         });
 });
 
-router.get('/http://localhost:4001/api/posts/:id', (req, res) => {
+router.get('/:id', (req, res) => {
     Posts.findById(req.params.id)
-        .then()
+        .then(post => {
+            if (post) {
+                res.status(200).json(post);
+            } else {
+                res.status(404).json({
+                    message: 'The post with the specified ID does not exist'
+                });
+            }
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -24,9 +32,11 @@ router.get('/http://localhost:4001/api/posts/:id', (req, res) => {
         });
 });
 
-router.get('/http://localhost:4001/api/posts', (req, res) => {
+router.get('/', (req, res) => {
     Posts.find()
-        .then()
+        .then(posts => {
+            res.status(200).json(posts);
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -35,7 +45,7 @@ router.get('/http://localhost:4001/api/posts', (req, res) => {
         });
 });
 
-router.post('/http://localhost:4001/api/posts', (req, res) => {
+router.post('/', (req, res) => {
     Posts.insert(req.body)
         .then()
         .catch(err => {
@@ -46,7 +56,7 @@ router.post('/http://localhost:4001/api/posts', (req, res) => {
         });
 });
 
-router.delete('/http://localhost:4001/api/posts/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     Posts.remove(req.params.id)
         .then()
         .catch(err => {
@@ -57,7 +67,7 @@ router.delete('/http://localhost:4001/api/posts/:id', (req, res) => {
         });
 });
 
-router.put('/http://localhost:4001/api/posts/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     Posts.update(req.params.id, req.body)
         .then()
         .catch(err => {
