@@ -115,9 +115,16 @@ router.put('/:id', (req, res) => {
                         message: 'Please provide title and contents for the post'
                     });
                 } else {
-                    res.status(200).json({
-                        message: `${updatedPosts} post was updated`
-                    });
+                    Posts.findById(req.params.id)
+                        .then(updatedPost => {
+                            res.status(200).json(updatedPost);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(500).json({
+                                message: 'The post information could not be retrieved'
+                            });
+                        });
                 }
             }
         })
