@@ -61,9 +61,16 @@ router.post('/', (req, res) => {
                     message: 'Please provide title and contents for the post'
                 });
             } else {
-                res.status(200).json({
-                    message: `New post with ID ${newPost.id} was created`
-                });
+                Posts.findById(newPost.id)
+                    .then(createdPost => {
+                        res.status(201).json(createdPost);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            message: 'The post information could not be retrieved'
+                        });
+                    });
             }
         })
         .catch(err => {
