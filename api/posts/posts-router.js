@@ -55,7 +55,17 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     Posts.insert(req.body)
-        .then()
+        .then(newPost => {
+            if (!req.body.title || !req.body.contents) {
+                res.status(400).json({
+                    message: 'Please provide title and contents for the post'
+                });
+            } else {
+                res.status(200).json({
+                    message: `New post with ID ${newPost.id} was created`
+                });
+            }
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -66,10 +76,10 @@ router.post('/', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     Posts.remove(req.params.id)
-        .then(deletedPost => {
-            if (deletedPost) {
+        .then(deletedPosts => {
+            if (deletedPosts) {
                 res.status(200).json({
-                    message: `${deletedPost} post with specified ID ${req.params.id} was deleted`
+                    message: `${deletedPosts} post with specified ID ${req.params.id} was deleted`
                 });
             } else {
                 res.status(404).json({
