@@ -4,7 +4,15 @@ const Posts = require('./posts-model');
 
 router.get('/:id/comments', (req, res) => {
     Posts.findPostComments(req.params.id)
-        .then()
+        .then(comments => {
+            if (comments.length !== 0) {
+                res.status(200).json(comments);
+            } else {
+                res.status(404).json({
+                    message: 'The post with the specified ID either does not exist, or has no comments associated with it'
+                });
+            }
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json({
